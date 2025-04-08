@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saving Goal Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Saving Goal Tracker</h1>
+            <p>Track your financial goals and get AI-powered advice</p>
+        </header>
+
+        <main>
+            <section class="goal-form">
+                <h2>Create New Goal</h2>
+                <form id="goalForm">
+                    <div class="form-group">
+                        <label for="goalName">Goal Name</label>
+                        <input type="text" id="goalName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="targetAmount">Target Amount ($)</label>
+                        <input type="number" id="targetAmount" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="currentAmount">Current Amount ($)</label>
+                        <input type="number" id="currentAmount" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="deadline">Target Date</label>
+                        <input type="date" id="deadline" required>
+                    </div>
+                    <button type="submit">Create Goal</button>
+                </form>
+            </section>
+
+            <section class="goals-list">
+                <h2>Your Goals</h2>
+                <div id="goalsContainer"></div>
+            </section>
+
+            <section class="chatbot">
+                <div class="chat-header">
+                    <h2><i class="fas fa-robot"></i> AI Assistant</h2>
+                    <button class="clear-chat"><i class="fas fa-trash"></i> Clear Chat</button>
+                </div>
+                <div class="chat-container">
+                    <div id="chatMessages">
+                        <div class="message bot">
+                            Hello! I'm your financial assistant. How can I help you with your saving goals today?
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <input type="text" id="userMessage" placeholder="Ask me anything about saving...">
+                        <button id="sendMessage"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html> 
