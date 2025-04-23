@@ -12,11 +12,10 @@ try:
     api_key = os.getenv('GEMINI_API_KEY')
     if not api_key:
         raise ValueError("GEMINI_API_KEY not found in environment variables")
-    
+
     genai.configure(api_key=api_key)
     print("Gemini API configured successfully")
-    
-    # List available models
+
     for m in genai.list_models():
         if 'generateContent' in m.supported_generation_methods:
             print(f"Model: {m.name}")
@@ -26,7 +25,6 @@ except Exception as e:
 
 # Initialize the model
 try:
-    # Using the gemini-2.0-flash model
     model = genai.GenerativeModel('gemini-2.0-flash')
     print("Gemini model initialized successfully")
 except Exception as e:
@@ -86,29 +84,34 @@ def goal_operations(goal_index):
 def chat():
     try:
         data = request.get_json()
-        message = data.get('message', '')
-        goals = data.get('goals', [])  # Get goals data from request
+        message = data.get('message', '').strip().lower()
+        goals = data.get('goals', [])
 
-        # Create context from goals
+        # Define allowed topics/keywords
+        allowed_keywords = [
+            "save", "saving", "goal", "budget", "finance", "money", "currency", "interest rate",
+            "target", "investment", "financial", "income", "expense", "dollar", "rupee", "euro"
+        ]
+
+        if not any(keyword in message for keyword in allowed_keywords):
+            return jsonify({'response': "I'm here to help only with savings, financial goals, and money-related questions based on your goals. Please ask something relevant."})
+
+        # Build goals context
         goals_context = ""
         if goals:
             goals_context = "Here are the user's current saving goals:\n"
             for goal in goals:
                 progress = (goal['currentAmount'] / goal['targetAmount']) * 100
-                goals_context += f"- {goal['name']}: ${goal['currentAmount']} of ${goal['targetAmount']} ({(progress):.1f}%)\n"
+                goals_context += f"- {goal['name']}: ${goal['currentAmount']} of ${goal['targetAmount']} ({progress:.1f}%)\n"
                 goals_context += f"  Target date: {goal['deadline']}\n"
 
-        # Combine user message with goals context
         full_message = f"{goals_context}\n\nUser question: {message}"
-        
-        print("Sending message to Gemini:", full_message)  # Debug print
+
+        # Send to Gemini
         response = model.generate_content(full_message)
-        print("Received response from Gemini:", response.text)  # Debug print
-        
         return jsonify({'response': response.text})
     except Exception as e:
-        print(f"Error in chat endpoint: {str(e)}")  # Debug print
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=5000, debug=True) 
+    app.run(host='127.0.0.1', port=5000, debug=True)
